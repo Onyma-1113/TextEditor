@@ -7,6 +7,10 @@ import javax.swing.undo.UndoManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.net.*;
+import com.google.gson.*;
+import javax.net.ssl.HttpsURLConnection;
 
 public class GUI implements ActionListener {
     JFrame window;
@@ -22,11 +26,85 @@ public class GUI implements ActionListener {
     UndoManager undoManager=new UndoManager();
     Functions functions = Functions.getInstance();
 
-    public static void main(String[] args) {
+    static String host = "https://api.bing.microsoft.com/";
+    static String path = "/v7.0/spellcheck";
 
+    static String key = "5ecfa9ca9d04436bae1033b6608bad03";
+
+    static String mkt = "en-US";
+    static String mode = "proof";
+    static String text = "Hollo, wrld!";
+
+    public static void main(String[] args) {
+        try {
+            check();
+        }
+        catch (Exception e) {
+            System.out.println (e);
+        }
         new GUI();
     }
+    // Method to call the spell check API
+    public static String checkSpelling(String text) throws Exception {
+        String params = "?mkt=" + mkt + "&mode=" + mode;
+        URL url = new URL(host + path + params);
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("Ocp-Apim-Subscription-Key", key);
+        connection.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+        wr.writeBytes("text=" + text);
+        wr.flush();
+        wr.close();
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(connection.getInputStream()));
+        String line;
+        StringBuilder response = new StringBuilder();
+        while ((line = in.readLine()) != null) {
+            response.append(line);
+        }
+        in.close();
 
+        JsonParser parser = new JsonParser();
+        JsonElement json = parser.parse(response.toString());
+        JsonArray flaggedTokens = json.getAsJsonObject().getAsJsonArray("flaggedTokens");
+
+        if (flaggedTokens.size() > 0) {
+            return flaggedTokens.toString();
+        } else {
+            return "";
+        }
+    }
+    public static void check () throws Exception {
+        String params = "?mkt=" + mkt + "&mode=" + mode;
+        // add the rest of the code snippets here (except prettify() and main())...
+        URL url = new URL(host + path + params);
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("Ocp-Apim-Subscription-Key", key);
+        connection.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+        wr.writeBytes("text=" + text);
+        wr.flush();
+        wr.close();
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(connection.getInputStream()));
+        String line;
+        while ((line = in.readLine()) != null) {
+            System.out.println(prettify(line));
+        }
+        in.close();
+    }
+    // This function prettifies the json response.
+    public static String prettify(String json_text) {
+        JsonParser parser = new JsonParser();
+        JsonElement json = parser.parse(json_text);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(json);
+
+    }
     public GUI(){
         createWindow();
         creatTextArea();
@@ -68,19 +146,36 @@ public class GUI implements ActionListener {
             textArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-
+                try {
+                    String suggestions = checkSpelling(textArea.getText());
+                    if (!suggestions.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, suggestions);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
                 label.setText(functions.countWords(GUI.this));
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-
+                try {
+                    String suggestions = checkSpelling(textArea.getText());
+                    // Display the suggestions
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
                 label.setText(functions.countWords(GUI.this));
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-
+                try {
+                    String suggestions = checkSpelling(textArea.getText());
+                    // Display the suggestions
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
                 label.setText(functions.countWords(GUI.this));
             }
         });
