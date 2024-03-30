@@ -8,12 +8,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.concurrent.ExecutionException;
-
 public class GUI implements ActionListener {
     JFrame window;
     JTextPane textArea;
@@ -30,25 +24,6 @@ public class GUI implements ActionListener {
 
     public static void main(String[] args) {
 
-        System.out.println("Hello world!");
-        String url = "https://api.sapling.ai/api/v1/edits";
-        String key = "N3LFLAMH03J56BZI5PT203IMCAOHBT9L";
-
-        String params = "{\"key\":\""+key+"\", \"text\":\"Lets get started!\", \"session_id\":\"Test Document UUID\"}";
-        System.out.println(params);
-
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(params))
-                .build();
-
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
-                .thenAccept(System.out::println)
-                .join();
-        System.out.println(System.getProperties());
         new GUI();
     }
 
@@ -85,7 +60,7 @@ public class GUI implements ActionListener {
         textArea.getDocument().addUndoableEditListener(new UndoableEditListener() {
             @Override
             public void undoableEditHappened(UndoableEditEvent e) {
-                updateTextWithSapling();
+
                 undoManager.addEdit(e.getEdit());
             }
         });
@@ -93,19 +68,19 @@ public class GUI implements ActionListener {
             textArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                updateTextWithSapling();
+
                 label.setText(functions.countWords(GUI.this));
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                updateTextWithSapling();
+
                 label.setText(functions.countWords(GUI.this));
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                updateTextWithSapling();
+
                 label.setText(functions.countWords(GUI.this));
             }
         });
@@ -113,39 +88,7 @@ public class GUI implements ActionListener {
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         window.add(scrollPane);
     }
-    private void updateTextWithSapling() {
-        String url = "https://api.sapling.ai/api/v1/edits";
-        String key = "N3LFLAMH03J56BZI5PT203IMCAOHBT9L";
-        String text = textArea.getText();
 
-        String params = "{\"key\":\""+key+"\", \"text\":\""+text+"\", \"session_id\":\"Test Document UUID\"}";
-
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(params))
-                .build();
-
-        SwingWorker<String, Void> worker = new SwingWorker<>() {
-            @Override
-            protected String doInBackground() throws Exception {
-                return client.send(request, HttpResponse.BodyHandlers.ofString()).body();
-            }
-
-            @Override
-            protected void done() {
-                try {
-                    String correctedText = get();
-                    textArea.setText(correctedText);
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        worker.execute();
-    }
     public void createMenubar(){
 
         menuBar = new JMenuBar();
