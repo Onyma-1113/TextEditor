@@ -1,10 +1,13 @@
 import javax.swing.*;
+import javax.swing.text.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoManager;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -71,7 +74,16 @@ public class GUI implements ActionListener {
         JsonArray flaggedTokens = json.getAsJsonObject().getAsJsonArray("flaggedTokens");
 
         if (flaggedTokens.size() > 0) {
-            return flaggedTokens.toString();
+            List<String> suggestionsList = new ArrayList<>();
+            for (JsonElement flaggedToken : flaggedTokens) {
+                JsonArray suggestions = flaggedToken.getAsJsonObject().getAsJsonArray("suggestions");
+                for (JsonElement suggestion : suggestions) {
+                    String suggestedWord = suggestion.getAsJsonObject().get("suggestion").getAsString();
+                    suggestionsList.add(suggestedWord);
+                }
+            }
+
+            return suggestionsList.toString();
         } else {
             return "";
         }
@@ -135,6 +147,15 @@ public class GUI implements ActionListener {
 
     public void creatTextArea(){
         textArea=new JTextPane();
+
+// Create a StyledDocument and set it as the document for the JTextPane
+        StyledDocument doc = new DefaultStyledDocument();
+        textArea.setDocument(doc);
+
+// Define a SimpleAttributeSet for the suggestion words
+        SimpleAttributeSet suggestionAttributes = new SimpleAttributeSet();
+        StyleConstants.setForeground(suggestionAttributes, Color.GRAY);
+
         textArea.getDocument().addUndoableEditListener(new UndoableEditListener() {
             @Override
             public void undoableEditHappened(UndoableEditEvent e) {
@@ -149,7 +170,7 @@ public class GUI implements ActionListener {
                 try {
                     String suggestions = checkSpelling(textArea.getText());
                     if (!suggestions.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, suggestions);
+                        label.setText(suggestions);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
