@@ -25,9 +25,13 @@ public class GUI implements ActionListener {
     JMenuItem arial,aptos,calibri,size8, size10,size12,size14,size16;
     JMenuItem light,black,teal,undo,redo,search;
     ImageIcon magnifierIcon=new ImageIcon("icon/magnifier.png");
+    String suggestions="";
+    JPanel panel;
     JLabel label;
+    JLabel labelSuggestions= new JLabel(suggestions,SwingConstants.RIGHT);
     UndoManager undoManager=new UndoManager();
     Functions functions = Functions.getInstance();
+
 
     static String host = "https://api.bing.microsoft.com/";
     static String path = "/v7.0/spellcheck";
@@ -168,9 +172,9 @@ public class GUI implements ActionListener {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 try {
-                    String suggestions = checkSpelling(textArea.getText());
+                    suggestions = checkSpelling(textArea.getText());
                     if (!suggestions.isEmpty()) {
-                        label.setText(suggestions);
+                        labelSuggestions.setText(suggestions);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -333,7 +337,12 @@ public class GUI implements ActionListener {
     public void createLabel(){
 
         label=new JLabel(functions.countWords(this));
-        window.add(label,BorderLayout.SOUTH);
+        panel = new JPanel(new GridLayout(2, 1));
+        panel.add(label);
+        panel.add(labelSuggestions);
+
+        // Add the panel to the SOUTH area of the BorderLayout
+        window.add(panel, BorderLayout.SOUTH);
     }
 
     @Override
