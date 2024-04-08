@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -129,7 +130,34 @@ public class Functions {
         String texts=gui.textArea.getText().replaceAll("[\\s\\p{Punct}]", "");
         return String.valueOf(texts.length());
     }
+    public void search(GUI gui) {
 
+        String input = JOptionPane.showInputDialog("Enter the word to search");
+        String text = gui.textArea.getText();
+
+        // Find the index of the first occurrence of the search string
+        int index = text.indexOf(input);
+
+        if (index != -1) {
+            // If the string was found, select it in the JTextPane
+            gui.textArea.requestFocus();
+            gui.textArea.select(index, index + input.length());
+            gui.textArea.select(index, index + input.length());
+        } else {
+            // If the string was not found, deselect any selected text
+            gui.textArea.select(0, 0);
+        }
+    }
+
+    public void autoCheck(GUI gui){
+        if (gui.autoOn) {
+            gui.autoOn = false;
+            gui.switchButton.setIcon(null);
+        } else {
+            gui.autoOn = true;
+            gui.switchButton.setIcon(gui.autoCheckIcon);
+        }
+    }
 //    public void underlineTexts(){
 //        try{
 //            int caretPosition = gui.textArea.getCaretPosition();
