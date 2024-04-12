@@ -43,7 +43,6 @@ public class GUI implements ActionListener {
     static String path = "/v7.0/spellcheck";
 
     static String key = "5ecfa9ca9d04436bae1033b6608bad03";
-
     static String mkt = "en-US";
     static String mode = "proof";
     static String text = "Hollo, wrld!";
@@ -54,6 +53,7 @@ public class GUI implements ActionListener {
         } catch (Exception e) {
             System.out.println(e);
         }
+
         new GUI();
     }
 
@@ -183,9 +183,8 @@ public class GUI implements ActionListener {
             public void insertUpdate(DocumentEvent e) {
                 try {
                     if(autoOn){
-                    String suggestions = checkSpelling(textArea.getText());}
-                    if (!suggestions.isEmpty()) {
-                        labelSuggestions.setText(suggestions);
+                    suggestions = checkSpelling(textArea.getText());
+                    labelSuggestions.setText(suggestions);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -197,9 +196,8 @@ public class GUI implements ActionListener {
             public void removeUpdate(DocumentEvent e) {
                 try {
                     if(autoOn){
-                        String suggestions = checkSpelling(textArea.getText());
+                         suggestions = checkSpelling(textArea.getText());
                     }
-                    // Display the suggestions
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -210,8 +208,7 @@ public class GUI implements ActionListener {
             public void changedUpdate(DocumentEvent e) {
                 try {
                     if(autoOn){
-                    String suggestions = checkSpelling(textArea.getText());}
-                    // Display the suggestions
+                     suggestions = checkSpelling(textArea.getText());}
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
