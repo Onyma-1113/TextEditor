@@ -14,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.*;
+
+import com.formdev.flatlaf.FlatLightLaf;
 import com.google.gson.*;
 import javax.net.ssl.HttpsURLConnection;
 
@@ -41,7 +43,6 @@ public class GUI implements ActionListener {
     JButton switchButton = new JButton(magnifierIcon);
     static String host = "https://api.bing.microsoft.com/";
     static String path = "/v7.0/spellcheck";
-
     static String key = "5ecfa9ca9d04436bae1033b6608bad03";
     static String mkt = "en-US";
     static String mode = "proof";
@@ -53,7 +54,7 @@ public class GUI implements ActionListener {
         } catch (Exception e) {
             System.out.println(e);
         }
-
+        FlatLightLaf.setup();
         new GUI();
     }
 
@@ -228,12 +229,11 @@ public class GUI implements ActionListener {
         edit = new JMenu("Edit");
         format = new JMenu("Format");
         style = new JMenu("Style");
-
+        menuBar.add(button);
         menuBar.add(file);
         menuBar.add(edit);
         menuBar.add(format);
         menuBar.add(style);
-        menuBar.add(button);
         menuBar.add(switchButton);
     }
 
