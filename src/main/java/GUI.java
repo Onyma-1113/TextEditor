@@ -14,8 +14,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.*;
-
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.intellijthemes.FlatArcOrangeIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatCobalt2IJTheme;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatDraculaIJTheme;
 import com.google.gson.*;
 import javax.net.ssl.HttpsURLConnection;
 
@@ -50,11 +52,13 @@ public class GUI implements ActionListener {
 
     public static void main(String[] args) {
         try {
+            UIManager.setLookAndFeel(new FlatCobalt2IJTheme());
             check();
         } catch (Exception e) {
             System.out.println(e);
         }
-        FlatLightLaf.setup();
+//        FlatLightLaf.setup();
+
         new GUI();
     }
 
