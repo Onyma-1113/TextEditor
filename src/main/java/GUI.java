@@ -6,12 +6,9 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoManager;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.*;
 import com.formdev.flatlaf.FlatLightLaf;
@@ -23,14 +20,16 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class GUI implements ActionListener {
     boolean autoOn = true;
+    int size = 16;
+    Font fontt;
     JFrame window;
     JTextPane textArea;
     JScrollPane scrollPane;
     JMenuBar menuBar;
-    JMenu file, edit, format, style, font, size;
+    JMenu file, edit, format, style, font;
     JMenuItem New, open, save, saveAs, exit;
     JMenuItem arial, aptos, calibri, size8, size10, size12, size14, size16;
-    JMenuItem light, black, teal, undo, redo, search;
+    JMenuItem Cobalt2, ArcOrange, MaterialLighter, undo, redo, search;
     ImageIcon magnifierIcon = new ImageIcon("icon/magnifier.png");
     ImageIcon autoCheckIcon = new ImageIcon("icon/grammarly-svgrepo-com.png");
     Image img2 = magnifierIcon.getImage();
@@ -57,7 +56,6 @@ public class GUI implements ActionListener {
         } catch (Exception e) {
             System.out.println(e);
         }
-//        FlatLightLaf.setup();
 
         new GUI();
     }
@@ -175,7 +173,25 @@ public class GUI implements ActionListener {
 // Define a SimpleAttributeSet for the suggestion words
         SimpleAttributeSet suggestionAttributes = new SimpleAttributeSet();
         StyleConstants.setForeground(suggestionAttributes, Color.GRAY);
-
+        textArea.addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                if (e.isControlDown()) {
+                     fontt = textArea.getFont();
+                     size = fontt.getSize();
+                    if (e.getWheelRotation() < 0) {
+                        // Mouse wheel moved UP, increase font size
+                        size++;
+                    } else {
+                        // Mouse wheel moved DOWN, decrease font size
+                        size--;
+                        if (size < 1) size = 1; // Ensure size never goes below 1
+                    }
+                    Font newFont = fontt.deriveFont((float) size);
+                    textArea.setFont(newFont);
+                }
+            }
+        });
         textArea.getDocument().addUndoableEditListener(new UndoableEditListener() {
             @Override
             public void undoableEditHappened(UndoableEditEvent e) {
@@ -262,17 +278,17 @@ public class GUI implements ActionListener {
         exit.addActionListener(this);
         exit.setActionCommand("Exit");
 
-        light = new JMenuItem("Light");
-        light.addActionListener(this);
-        light.setActionCommand("Light");
+        Cobalt2 = new JMenuItem("Cobalt2");
+        Cobalt2.addActionListener(this);
+        Cobalt2.setActionCommand("Cobalt2");
 
-        black = new JMenuItem("Black");
-        black.addActionListener(this);
-        black.setActionCommand("Black");
+        ArcOrange = new JMenuItem("ArcOrange");
+        ArcOrange.addActionListener(this);
+        ArcOrange.setActionCommand("ArcOrange");
 
-        teal = new JMenuItem("Teal");
-        teal.addActionListener(this);
-        teal.setActionCommand("Teal");
+        MaterialLighter = new JMenuItem("MaterialLighter");
+        MaterialLighter.addActionListener(this);
+        MaterialLighter.setActionCommand("MaterialLighter");
 
         undo = new JMenuItem("Undo");
         undo.addActionListener(this);
@@ -294,9 +310,9 @@ public class GUI implements ActionListener {
         file.add(saveAs);
         file.add(exit);
 
-        style.add(light);
-        style.add(black);
-        style.add(teal);
+        style.add(Cobalt2);
+        style.add(ArcOrange);
+        style.add(MaterialLighter);
 
         edit.add(undo);
         edit.add(redo);
@@ -305,7 +321,6 @@ public class GUI implements ActionListener {
     public void createFormatMenu() {
 
         font = new JMenu("Font");
-        size = new JMenu("Size");
 
         arial = new JMenuItem("Arial");
         arial.addActionListener(this);
@@ -319,36 +334,10 @@ public class GUI implements ActionListener {
         calibri.addActionListener(this);
         calibri.setActionCommand("Calibri");
 
-        size8 = new JMenuItem("8");
-        size8.addActionListener(this);
-        size8.setActionCommand("Size 8");
-
-        size10 = new JMenuItem("10");
-        size10.addActionListener(this);
-        size10.setActionCommand("Size 10");
-
-        size12 = new JMenuItem("12");
-        size12.addActionListener(this);
-        size12.setActionCommand("Size 12");
-
-        size14 = new JMenuItem("14");
-        size14.addActionListener(this);
-        size14.setActionCommand("Size 14");
-
-        size16 = new JMenuItem("16");
-        size16.addActionListener(this);
-        size16.setActionCommand("Size 16");
-
         format.add(font);
-        format.add(size);
         font.add(arial);
         font.add(aptos);
         font.add(calibri);
-        size.add(size8);
-        size.add(size10);
-        size.add(size12);
-        size.add(size14);
-        size.add(size16);
     }
 
     public void createLabel() {
@@ -391,29 +380,14 @@ public class GUI implements ActionListener {
             case "Aptos":
                 functions.setFont(this, "Aptos");
                 break;
-            case "Size 8":
-                functions.createFonts(this, 8);
+            case "Cobalt2":
+                functions.setTheme(this, "Cobalt2");
                 break;
-            case "Size 10":
-                functions.createFonts(this, 10);
+            case "ArcOrange":
+                functions.setTheme(this, "ArcOrange");
                 break;
-            case "Size 12":
-                functions.createFonts(this, 12);
-                break;
-            case "Size 14":
-                functions.createFonts(this, 14);
-                break;
-            case "Size 16":
-                functions.createFonts(this, 16);
-                break;
-            case "Light":
-                functions.setColor(this, "Light");
-                break;
-            case "Black":
-                functions.setColor(this, "Black");
-                break;
-            case "Teal":
-                functions.setColor(this, "Teal");
+            case "MaterialLighter":
+                functions.setTheme(this, "MaterialLighter");
                 break;
             case "Undo": {
                 if (undoManager.canUndo())

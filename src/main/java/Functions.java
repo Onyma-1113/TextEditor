@@ -1,3 +1,7 @@
+import com.formdev.flatlaf.intellijthemes.FlatArcOrangeIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatCobalt2IJTheme;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialLighterIJTheme;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
@@ -8,7 +12,6 @@ import java.awt.Color;
 public class Functions {
     private static Functions functions;
     String fileName,fileAddress,font="Arial";
-    Font arial,calibri,aptos;
     private Functions(){
 
     }
@@ -89,39 +92,47 @@ public class Functions {
     System.exit(0);
     }
 
-    public void createFonts(GUI gui,int fontSize){
-        arial=new Font("Arial",Font.PLAIN,fontSize);
-        calibri=new Font("Calibri",Font.PLAIN,fontSize);
-        aptos=new Font("Aptos",Font.PLAIN,fontSize);
-        setFont(gui,font);
-    }
-
     public void setFont(GUI gui,String selectedFont){
         font=selectedFont;
 
         switch (font){
-            case "Arial":gui.textArea.setFont(arial);break;
-            case "Calibri":gui.textArea.setFont(calibri);break;
-            case "Aptos":gui.textArea.setFont(aptos);break;
+            case "Arial":{
+                gui.textArea.setFont(new Font("Arial", Font.PLAIN, gui.size));
+            }break;
+            case "Calibri":{
+                gui.textArea.setFont(new Font("Calibri", Font.PLAIN, gui.size));
+            }break;
+            case "Aptos":{
+                gui.textArea.setFont(new Font("Aptos", Font.PLAIN, gui.size));
+            }break;
         }
     }
 
-    public void setColor(GUI gui,String color){
-        switch (color){
-            case "White":
-            {gui.window.getContentPane().setBackground(Color.white);
-            gui.textArea.setBackground(Color.white);
-            gui.textArea.setForeground(Color.black);
+    public void setTheme(GUI gui,String theme){
+        switch (theme){
+            case "Cobalt2":
+            {
+                try {
+                UIManager.setLookAndFeel(new FlatCobalt2IJTheme());
+                SwingUtilities.updateComponentTreeUI(gui.window);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             }break;
-            case "Black":{
-                gui.window.getContentPane().setBackground(Color.black);
-                gui.textArea.setBackground(Color.black);
-                gui.textArea.setForeground(Color.white);
+            case "ArcOrange":{
+                try {
+                UIManager.setLookAndFeel(new FlatArcOrangeIJTheme());
+                SwingUtilities.updateComponentTreeUI(gui.window);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             }break;
-            case "Teal":{
-                gui.window.getContentPane().setBackground(Color.cyan);
-                gui.textArea.setBackground(Color.cyan);
-                gui.textArea.setForeground(Color.white);
+            case "MaterialLighter":{try {
+                UIManager.setLookAndFeel(new FlatMaterialLighterIJTheme());
+                SwingUtilities.updateComponentTreeUI(gui.window);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             }break;
         }
     }
@@ -141,7 +152,6 @@ public class Functions {
         if (index != -1) {
             // If the string was found, select it in the JTextPane
             gui.textArea.requestFocus();
-            gui.textArea.select(index, index + input.length());
             gui.textArea.select(index, index + input.length());
         } else {
             // If the string was not found, deselect any selected text
