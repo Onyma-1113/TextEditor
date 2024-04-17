@@ -3,6 +3,8 @@ import com.formdev.flatlaf.intellijthemes.FlatCobalt2IJTheme;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialLighterIJTheme;
 
 import javax.swing.*;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -142,23 +144,24 @@ public class Functions {
         return String.valueOf(texts.length());
     }
     public void search(GUI gui) {
-
+try{
         String input = JOptionPane.showInputDialog("Enter the word to search");
         String text = gui.textArea.getText();
-
+        Highlighter highlighter = gui.textArea.getHighlighter();
+        Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.pink);
         // Find the index of the first occurrence of the search string
         int index = text.indexOf(input);
 
-        if (index != -1) {
+        while (index != -1) {
             // If the string was found, select it in the JTextPane
-            gui.textArea.requestFocus();
-            gui.textArea.select(index, index + input.length());
-        } else {
-            // If the string was not found, deselect any selected text
-            gui.textArea.select(0, 0);
-        }
+//            gui.textArea.requestFocus();
+            highlighter.addHighlight(index, index + input.length(),painter);
+            index+=input.length();
+            index=text.indexOf(input,index);
+        }}catch (Exception e){
+    e.printStackTrace();
+}
     }
-
     public void autoCheck(GUI gui){
         if (gui.autoOn) {
             gui.autoOn = false;

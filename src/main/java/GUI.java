@@ -192,6 +192,14 @@ public class GUI implements ActionListener {
                 }
             }
         });
+        textArea.addMouseListener(new MouseAdapter() {
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // Remove all highlights
+        Highlighter highlighter = textArea.getHighlighter();
+        highlighter.removeAllHighlights();
+    }
+});
         textArea.getDocument().addUndoableEditListener(new UndoableEditListener() {
             @Override
             public void undoableEditHappened(UndoableEditEvent e) {
